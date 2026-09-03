@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/appointment")
 public class AppointmentServlet extends HttpServlet {
@@ -32,6 +33,13 @@ public class AppointmentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
+    	HttpSession session = request.getSession(false);
+
+    	if (session == null || session.getAttribute("user") == null) {
+    	    response.sendRedirect("login.jsp");
+    	    return;
+    	}
 
         String action = request.getParameter("action");
 
@@ -42,16 +50,61 @@ public class AppointmentServlet extends HttpServlet {
                 String patientName = request.getParameter("patientName");
                 String address = request.getParameter("address");
                 String contactNumber = request.getParameter("contactNumber");
+                
+                if (!com.sunrise.dental.util.ValidationUtil.isValidName(patientName)) {
+
+                    request.setAttribute("errorMessage",
+
+                            "Invalid patient name. Please use letters and spaces only.");
+
+                    request.getRequestDispatcher("appointment.jsp").forward(request, response);
+
+                    return;
+
+                }
+
+                if (!com.sunrise.dental.util.ValidationUtil.isValidContactNumber(contactNumber)) {
+
+                    request.setAttribute("errorMessage",
+
+                            "Invalid contact number. Please enter exactly 10 digits.");
+
+                    request.getRequestDispatcher("appointment.jsp").forward(request, response);
+
+                    return;
+
+                }
 
                 // Dentist, treatment and appointment details
                 int dentistId = Integer.parseInt(request.getParameter("dentistId"));
                 int treatmentId = Integer.parseInt(request.getParameter("treatmentId"));
 
-                LocalDate appointmentDate =
-                        LocalDate.parse(request.getParameter("appointmentDate"));
+                String appointmentDateText = request.getParameter("appointmentDate");
+                String appointmentTimeText = request.getParameter("appointmentTime");
 
-                LocalTime appointmentTime =
-                        LocalTime.parse(request.getParameter("appointmentTime"));
+                if (appointmentDateText == null || appointmentDateText.trim().isEmpty()) {
+                    request.setAttribute("errorMessage",
+                            "Please select an appointment date.");
+                    request.getRequestDispatcher("appointment.jsp").forward(request, response);
+                    return;
+                }
+
+                if (appointmentTimeText == null || appointmentTimeText.trim().isEmpty()) {
+                    request.setAttribute("errorMessage",
+                            "Please select an appointment time.");
+                    request.getRequestDispatcher("appointment.jsp").forward(request, response);
+                    return;
+                }
+
+                LocalDate appointmentDate = LocalDate.parse(appointmentDateText);
+                LocalTime appointmentTime = LocalTime.parse(appointmentTimeText);
+
+                if (appointmentDate.isBefore(LocalDate.now())) {
+                    request.setAttribute("errorMessage",
+                            "Appointment date cannot be in the past.");
+                    request.getRequestDispatcher("appointment.jsp").forward(request, response);
+                    return;
+                }
 
                 // Create Patient object
                 Patient patient = new Patient();
@@ -77,24 +130,28 @@ public class AppointmentServlet extends HttpServlet {
                 appointment.setStatus("Scheduled");
 
                 // Send appointment to service layer
-                boolean success =
-                        appointmentService.registerAppointment(appointment);
+                boolean available = appointmentService.checkAvailability(
+                        dentistId,
+                        appointmentDate,
+                        appointmentTime
+                );
 
-                if (success) {
-
-                    request.setAttribute(
-                            "successMessage",
-                            "Appointment registered successfully. Appointment No: "
-                                    + appointment.getAppointmentNo()
-                    );
-
+                if (!available) {
+                    request.setAttribute("errorMessage",
+                            "This dentist is already booked for the selected date and time. "
+                            + "Please choose another time.");
                 } else {
 
-                    request.setAttribute(
-                            "errorMessage",
-                            "Appointment registration failed. "
-                            + "The dentist may already be booked or the entered data is invalid."
-                    );
+                    boolean success = appointmentService.registerAppointment(appointment);
+
+                    if (success) {
+                        request.setAttribute("successMessage",
+                                "Appointment registered successfully. Appointment No: "
+                                        + appointment.getAppointmentNo());
+                    } else {
+                        request.setAttribute("errorMessage",
+                                "Appointment registration failed. Please check the entered details.");
+                    }
                 }
 
             } catch (Exception e) {
@@ -118,6 +175,13 @@ public class AppointmentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
+    	HttpSession session = request.getSession(false);
+
+    	if (session == null || session.getAttribute("user") == null) {
+    	    response.sendRedirect("login.jsp");
+    	    return;
+    	}
 
         String appointmentNoText = request.getParameter("appointmentNo");
 

@@ -159,6 +159,7 @@
         <a href="appointment">Appointments</a>
         <a href="billing">Billing</a>
         <a href="reports">Reports</a>
+        <a href="help.jsp">Help</a>
         <a href="logout">Logout</a>
     </div>
 

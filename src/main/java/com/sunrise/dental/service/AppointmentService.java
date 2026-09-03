@@ -1,5 +1,6 @@
 package com.sunrise.dental.service;
 
+import com.sunrise.dental.util.ValidationUtil;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -41,14 +42,16 @@ public class AppointmentService {
             return false;
         }
 
-        if (patient.getName() == null
-                || patient.getName().trim().isEmpty()) {
+        if (!ValidationUtil.isValidName(patient.getName())) {
+
             return false;
+
         }
 
-        if (patient.getContactNumber() == null
-                || patient.getContactNumber().trim().isEmpty()) {
+        if (!ValidationUtil.isValidContactNumber(patient.getContactNumber())) {
+
             return false;
+
         }
 
         if (appointment.getAppointmentDate() == null

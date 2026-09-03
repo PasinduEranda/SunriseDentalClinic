@@ -149,6 +149,7 @@
         <a href="appointment.jsp">Appointments</a>
         <a href="bill.jsp">Billing</a>
         <a href="reports">Reports</a>
+        <a href="help.jsp">Help</a>
         <a href="login.jsp">Logout</a>
     </div>
 
