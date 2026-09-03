@@ -26,31 +26,32 @@ public class AppointmentDAO {
     public boolean save(Appointment appointment) {
 
         String sql = "INSERT INTO appointments "
-                   + "(patient_id, dentist_id, treatment_id, "
-                   + "appointment_date, appointment_time, status) "
-                   + "VALUES (?, ?, ?, ?, ?, ?)";
+                + "(patient_id, dentist_id, treatment_id, appointment_date, appointment_time, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setInt(1, appointment.getPatient().getPatientId());
             statement.setInt(2, appointment.getDentist().getDentistId());
             statement.setInt(3, appointment.getTreatment().getTreatmentId());
-
-            statement.setDate(
-                    4,
-                    Date.valueOf(appointment.getAppointmentDate())
-            );
-
-            statement.setTime(
-                    5,
-                    Time.valueOf(appointment.getAppointmentTime())
-            );
-
+            statement.setDate(4, java.sql.Date.valueOf(appointment.getAppointmentDate()));
+            statement.setTime(5, java.sql.Time.valueOf(appointment.getAppointmentTime()));
             statement.setString(6, appointment.getStatus());
 
             int rows = statement.executeUpdate();
 
-            return rows > 0;
+            if (rows > 0) {
+
+                try (ResultSet resultSet = statement.getGeneratedKeys()) {
+
+                    if (resultSet.next()) {
+                        appointment.setAppointmentNo(resultSet.getInt(1));
+                    }
+                }
+
+                return true;
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
