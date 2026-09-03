@@ -29,10 +29,11 @@ public class BillingServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Check whether staff is logged in
+        // Check login
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
@@ -40,9 +41,11 @@ public class BillingServlet extends HttpServlet {
             return;
         }
 
-        String appointmentNoText = request.getParameter("appointmentNo");
+        String appointmentNoText =
+                request.getParameter("appointmentNo");
 
-        if (appointmentNoText == null || appointmentNoText.trim().isEmpty()) {
+        if (appointmentNoText == null ||
+            appointmentNoText.trim().isEmpty()) {
 
             request.setAttribute(
                     "errorMessage",
@@ -57,10 +60,13 @@ public class BillingServlet extends HttpServlet {
 
         try {
 
-            int appointmentNo = Integer.parseInt(appointmentNoText);
+            int appointmentNo =
+                    Integer.parseInt(appointmentNoText);
 
             Appointment appointment =
-                    appointmentService.searchAppointment(appointmentNo);
+                    appointmentService.searchAppointment(
+                            appointmentNo
+                    );
 
             if (appointment == null) {
 
@@ -71,11 +77,41 @@ public class BillingServlet extends HttpServlet {
 
             } else {
 
-                Bill bill = billingService.calculateBill(appointment);
+                // Calculate bill
+                Bill bill =
+                        billingService.calculateBill(
+                                appointment
+                        );
 
                 if (bill != null) {
 
-                    request.setAttribute("bill", bill);
+                    // Save bill to database
+                    boolean saved =
+                            billingService.saveBill(bill);
+
+                    if (saved) {
+
+                        request.setAttribute(
+                                "successMessage",
+                                "Bill generated and saved successfully."
+                        );
+
+                    } else {
+
+                        /*
+                         * The bill may already exist for this
+                         * appointment.
+                         */
+                        request.setAttribute(
+                                "errorMessage",
+                                "Bill already exists for this appointment."
+                        );
+                    }
+
+                    request.setAttribute(
+                            "bill",
+                            bill
+                    );
 
                 } else {
 
