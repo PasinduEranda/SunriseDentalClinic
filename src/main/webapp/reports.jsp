@@ -146,11 +146,11 @@
     <p>Appointment & Patient Management System</p>
 
     <div class="nav">
-        <a href="appointment.jsp">Appointments</a>
-        <a href="bill.jsp">Billing</a>
+        <a href="appointment">Appointments</a>
+        <a href="billing">Billing</a>
         <a href="reports">Reports</a>
-        <a href="help.jsp">Help</a>
-        <a href="login.jsp">Logout</a>
+        <a href="help">Help</a>
+        <a href="logout">Logout</a>
     </div>
 
 </div>
