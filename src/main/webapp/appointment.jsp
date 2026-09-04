@@ -130,92 +130,8 @@ button:hover {
 	</div>
 
 	<div class="container">
-
-		<!-- Success message -->
-		<%
-		if (request.getAttribute("successMessage") != null) {
-		%>
-		<div class="success">
-			<%=request.getAttribute("successMessage")%>
-		</div>
-		<%
-		}
-		%>
-
-		<!-- Error message -->
-		<%
-		if (request.getAttribute("errorMessage") != null) {
-		%>
-		<div class="error">
-			<%=request.getAttribute("errorMessage")%>
-		</div>
-		<%
-		}
-		%>
-
-
-		<!-- Register Appointment -->
-		<div class="card">
-
-			<h2>Register New Appointment</h2>
-
-			<form action="appointment" method="post">
-
-				<input type="hidden" name="action" value="register">
-
-				<div class="form-group">
-					<label>Patient Name</label> <input type="text" name="patientName"
-						required maxlength="100" placeholder="Enter patient name">
-				</div>
-
-				<div class="form-group">
-					<label>Address</label> <input type="text" name="address"
-						maxlength="255" placeholder="Enter patient address">
-				</div>
-
-				<div class="form-group">
-					<label>Contact Number</label> <input type="text"
-						name="contactNumber" required maxlength="20"
-						placeholder="Enter contact number">
-				</div>
-
-				<div class="form-group">
-					<label>Dentist</label> <select name="dentistId" required>
-						<option value="">-- Select Dentist --</option>
-						<option value="1">Dr. John Perera</option>
-						<option value="2">Dr. Sarah Fernando</option>
-					</select>
-				</div>
-
-				<div class="form-group">
-					<label>Treatment</label> <select name="treatmentId" required>
-						<option value="">-- Select Treatment --</option>
-						<option value="1">Dental Checkup - Rs. 2,500</option>
-						<option value="2">Teeth Cleaning - Rs. 5,000</option>
-						<option value="3">Tooth Filling - Rs. 7,500</option>
-						<option value="4">Tooth Extraction - Rs. 10,000</option>
-						<option value="5">Root Canal Treatment - Rs. 25,000</option>
-					</select>
-				</div>
-
-				<div class="form-group">
-					<label>Appointment Date</label> <input type="date"
-						name="appointmentDate" required>
-				</div>
-
-				<div class="form-group">
-					<label>Appointment Time</label> <input type="time"
-						name="appointmentTime" required>
-				</div>
-
-				<button type="submit">Register Appointment</button>
-
-			</form>
-
-		</div>
-
-
-		<!-- Search Appointment -->
+	
+	<!-- Search Appointment -->
 		<div class="card">
 
 			<h2>Search Appointment</h2>
@@ -301,6 +217,92 @@ button:hover {
 		<%
 		}
 		%>
+
+		<!-- Success message -->
+		<%
+		if (request.getAttribute("successMessage") != null) {
+		%>
+		<div class="success">
+			<%=request.getAttribute("successMessage")%>
+		</div>
+		<%
+		}
+		%>
+
+		<!-- Error message -->
+		<%
+		if (request.getAttribute("errorMessage") != null) {
+		%>
+		<div class="error">
+			<%=request.getAttribute("errorMessage")%>
+		</div>
+		<%
+		}
+		%>
+
+
+		<!-- Register Appointment -->
+		<div class="card">
+
+			<h2>Register New Appointment</h2>
+
+			<form action="appointment" method="post">
+
+				<input type="hidden" name="action" value="register">
+
+				<div class="form-group">
+					<label>Patient Name</label> <input type="text" name="patientName"
+						required maxlength="100" placeholder="Enter patient name">
+				</div>
+
+				<div class="form-group">
+					<label>Address</label> <input type="text" name="address"
+						maxlength="255" placeholder="Enter patient address">
+				</div>
+
+				<div class="form-group">
+					<label>Contact Number</label> <input type="text"
+						name="contactNumber" required maxlength="20"
+						placeholder="Enter contact number">
+				</div>
+
+				<div class="form-group">
+					<label>Dentist</label> <select name="dentistId" required>
+						<option value="">-- Select Dentist --</option>
+						<option value="1">Dr. John Perera</option>
+						<option value="2">Dr. Sarah Fernando</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>Treatment</label> <select name="treatmentId" required>
+						<option value="">-- Select Treatment --</option>
+						<option value="1">Dental Checkup - Rs. 2,500</option>
+						<option value="2">Teeth Cleaning - Rs. 5,000</option>
+						<option value="3">Tooth Filling - Rs. 7,500</option>
+						<option value="4">Tooth Extraction - Rs. 10,000</option>
+						<option value="5">Root Canal Treatment - Rs. 25,000</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>Appointment Date</label> <input type="date"
+						name="appointmentDate" required>
+				</div>
+
+				<div class="form-group">
+					<label>Appointment Time</label> <input type="time"
+						name="appointmentTime" required>
+				</div>
+
+				<button type="submit">Register Appointment</button>
+
+			</form>
+
+		</div>
+
+
+		
 
 	</div>
 

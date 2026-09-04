@@ -33,11 +33,14 @@ public class ReportServlet extends HttpServlet {
             throws ServletException, IOException {
 
         // Check whether clinic staff is logged in
-        HttpSession session = request.getSession(false);
+    	HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
+
             response.sendRedirect("login.jsp");
+
             return;
+
         }
 
         // Generate appointment report
