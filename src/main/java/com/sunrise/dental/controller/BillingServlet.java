@@ -64,61 +64,57 @@ public class BillingServlet extends HttpServlet {
                     Integer.parseInt(appointmentNoText);
 
             Appointment appointment =
-                    appointmentService.searchAppointment(
-                            appointmentNo
-                    );
+                    appointmentService.searchAppointment(appointmentNo);
 
             if (appointment == null) {
 
-                request.setAttribute(
-                        "errorMessage",
-                        "Appointment not found."
-                );
+                request.setAttribute("errorMessage",
+                        "Appointment not found.");
 
             } else {
 
-                // Calculate bill
+                // Check whether a bill already exists
                 Bill bill =
-                        billingService.calculateBill(
-                                appointment
-                        );
+                        billingService.getExistingBill(appointmentNo);
 
                 if (bill != null) {
 
-                    // Save bill to database
-                    boolean saved =
-                            billingService.saveBill(bill);
+                    // Existing bill found
+                    bill.setAppointment(appointment);
 
-                    if (saved) {
+                    request.setAttribute("bill", bill);
 
-                        request.setAttribute(
-                                "successMessage",
-                                "Bill generated and saved successfully."
-                        );
-
-                    } else {
-
-                        /*
-                         * The bill may already exist for this
-                         * appointment.
-                         */
-                        request.setAttribute(
-                                "errorMessage",
-                                "Bill already exists for this appointment."
-                        );
-                    }
-
-                    request.setAttribute(
-                            "bill",
-                            bill
-                    );
+                    request.setAttribute("successMessage",
+                            "Existing bill found for this appointment.");
 
                 } else {
 
-                    request.setAttribute(
-                            "errorMessage",
-                            "Unable to calculate the bill."
-                    );
+                    // No bill exists, so calculate and save a new one
+                    bill = billingService.calculateBill(appointment);
+
+                    if (bill != null) {
+
+                        boolean saved =
+                                billingService.saveBill(bill);
+
+                        if (saved) {
+
+                            request.setAttribute("successMessage",
+                                    "Bill generated and saved successfully.");
+
+                            request.setAttribute("bill", bill);
+
+                        } else {
+
+                            request.setAttribute("errorMessage",
+                                    "Unable to save the bill.");
+                        }
+
+                    } else {
+
+                        request.setAttribute("errorMessage",
+                                "Unable to calculate the bill.");
+                    }
                 }
             }
 

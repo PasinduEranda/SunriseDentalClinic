@@ -25,14 +25,46 @@ public class BillingDAO {
                    + "(appointment_no, treatment_cost, consultation_fee, total_amount) "
                    + "VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, bill.getAppointment().getAppointmentNo());
-            statement.setDouble(2, bill.getTreatmentCost());
-            statement.setDouble(3, bill.getConsultationFee());
-            statement.setDouble(4, bill.getTotalAmount());
+            statement.setInt(
+                    1,
+                    bill.getAppointment().getAppointmentNo()
+            );
 
-            return statement.executeUpdate() > 0;
+            statement.setDouble(
+                    2,
+                    bill.getTreatmentCost()
+            );
+
+            statement.setDouble(
+                    3,
+                    bill.getConsultationFee()
+            );
+
+            statement.setDouble(
+                    4,
+                    bill.getTotalAmount()
+            );
+
+            int rows = statement.executeUpdate();
+
+            if (rows > 0) {
+
+                try (ResultSet resultSet =
+                        statement.getGeneratedKeys()) {
+
+                    if (resultSet.next()) {
+
+                        bill.setBillId(
+                                resultSet.getInt(1)
+                        );
+                    }
+                }
+
+                return true;
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

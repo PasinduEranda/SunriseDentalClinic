@@ -61,6 +61,14 @@ public class BillingService {
 
         return billingDAO.save(bill);
     }
+    
+    public Bill getExistingBill(int appointmentNo) {
+        if (appointmentNo <= 0) {
+            return null;
+        }
+
+        return billingDAO.findByAppointmentNo(appointmentNo);
+    }
 
     public void printReceipt(Bill bill) {
 
